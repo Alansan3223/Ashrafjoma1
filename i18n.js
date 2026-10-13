@@ -86,6 +86,8 @@ window.I18N = {
     viewOnMap: "הצג במפה",
     back: "חזרה",
     resultsCount: "מקומות",
+    tabAdmin: "ניהול",
+    logout: "התנתקות",
   },
   ar: {
     dir: "rtl",
@@ -173,6 +175,8 @@ window.I18N = {
     viewOnMap: "عرض على الخريطة",
     back: "رجوع",
     resultsCount: "أماكن",
+    tabAdmin: "الإدارة",
+    logout: "تسجيل الخروج",
   },
   en: {
     dir: "ltr",
@@ -260,6 +264,8 @@ window.I18N = {
     viewOnMap: "Show on map",
     back: "Back",
     resultsCount: "places",
+    tabAdmin: "Admin",
+    logout: "Sign out",
   },
 };
 

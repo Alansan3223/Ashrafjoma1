@@ -183,7 +183,7 @@ main { padding-bottom: calc(var(--tabbar-h) + var(--safe-b) + 12px); }
 /* Tab bar */
 .tabbar {
   position: fixed; bottom: 0; inset-inline: 0; z-index: 600;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
   height: calc(var(--tabbar-h) + var(--safe-b)); padding-bottom: var(--safe-b);
   background: var(--card); border-top: 1px solid var(--border);
   box-shadow: 0 -2px 12px rgba(0,0,0,.06);
@@ -266,3 +266,77 @@ main { padding-bottom: calc(var(--tabbar-h) + var(--safe-b) + 12px); }
   background: #111827; color: #fff; padding: 10px 16px; border-radius: 999px; z-index: 2000; font-size: .9rem;
   max-width: calc(100% - 32px); text-align: center;
 }
+
+/* ---------- Access gate ---------- */
+body.locked { overflow: hidden; }
+body.locked > header, body.locked > main, body.locked > .tabbar { visibility: hidden; }
+.gate {
+  position: fixed; inset: 0; z-index: 3000; overflow-y: auto;
+  background: linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 55%, #0B2A57 100%);
+  color: #fff;
+}
+.gate-body {
+  min-height: 100%; max-width: 440px; margin: 0 auto; text-align: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 28px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.gate-logo { width: 132px; height: 132px; border-radius: 50%; background: #fff; object-fit: contain; box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+.gate-name { margin: 14px 0 0; font-size: 1.6rem; }
+.gate-tagline { margin: 4px 0 18px; opacity: .85; }
+.gate-card {
+  width: 100%; background: var(--card); color: var(--text); border-radius: 20px;
+  padding: 22px 18px; box-shadow: 0 10px 40px rgba(0,0,0,.25);
+}
+.gate-card h2 { margin: 0 0 6px; font-size: 1.3rem; }
+.gate-card .spinner { margin: 16px auto; }
+.gate-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+  min-height: 50px; border-radius: 14px; border: 1px solid var(--border); background: var(--card);
+  font-weight: 700; font-size: 1rem; margin-top: 12px; text-decoration: none; color: var(--text);
+}
+.gate-btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.gate-btn.wa { background: #25D366; border-color: #25D366; color: #fff; }
+.gate-btn:disabled { opacity: .6; }
+.gate-or { display: flex; align-items: center; gap: 10px; margin: 16px 0 4px; color: var(--muted); font-size: .85rem; }
+.gate-or::before, .gate-or::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.gate-form { display: grid; gap: 10px; }
+.gate-form input {
+  width: 100%; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--bg); font-size: 1rem; text-align: start;
+}
+.gate-error { color: #D93848; font-weight: 600; margin: 12px 0 0; }
+.gate-links { margin: 14px 0 0; font-size: .9rem; }
+.link-btn { border: 0; background: none; color: var(--primary); font-weight: 600; padding: 4px; text-decoration: underline; }
+.gate-user { margin: 18px 0 0; font-size: .85rem; color: var(--muted); }
+.gate-icon { font-size: 2.6rem; }
+.gate-langs { display: flex; gap: 6px; margin-top: 18px; }
+.gate-langs button { border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; border-radius: 999px; padding: 6px 12px; font-size: .85rem; }
+.gate-langs button.active { background: #fff; color: var(--primary-dark); }
+.price { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 10px 0; }
+.price span { font-size: 2.8rem; font-weight: 800; color: var(--primary); }
+.price small { color: var(--muted); }
+.paypal-box { margin: 16px 0 6px; min-height: 60px; }
+.small { font-size: .82rem; }
+code { background: var(--chip); padding: 2px 6px; border-radius: 6px; font-size: .85em; }
+
+/* ---------- Admin ---------- */
+#view-admin { padding: 14px 16px; max-width: 760px; margin: 0 auto; }
+.admin-panel h2 { margin: 4px 0 12px; }
+.admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.admin-stats div { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px; text-align: center; box-shadow: var(--shadow); }
+.admin-stats b { display: block; font-size: 1.4rem; color: var(--primary); }
+.admin-stats small { color: var(--muted); }
+.admin-seg { margin: 6px 0 12px; overflow-x: auto; }
+.admin-seg button { white-space: nowrap; }
+.admin-list { display: grid; gap: 10px; }
+.admin-user { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.admin-user-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
+.admin-user-head > div { min-width: 0; overflow-wrap: anywhere; }
+.tag.paid { background: rgba(37, 211, 102, .18); }
+.tag.unpaid { background: rgba(247, 164, 29, .2); }
+.admin-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.admin-actions .pill { min-height: 40px; padding: 8px 14px; }
+.badge:empty { display: none; }
+.badge { position: absolute; margin-inline-start: -6px; margin-top: -4px; background: #E0475B; color: #fff; font-size: .65rem; border-radius: 999px; padding: 1px 5px; font-style: normal; }
+.tabbar button span { position: relative; }
+.logout-box { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 24px; }

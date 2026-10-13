@@ -504,6 +504,7 @@
 
   // ---------- views ----------
   function showView(v) {
+    if (!$(`#view-${v}`)) return;
     state.view = v;
     $$(".view").forEach((el) => el.classList.toggle("active", el.id === `view-${v}`));
     $$(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.view === v));
@@ -512,6 +513,7 @@
       setTimeout(() => map && map.invalidateSize(), 50);
     }
     if (v === "favorites") renderFavorites();
+    document.dispatchEvent(new CustomEvent("viewchange", { detail: v }));
     window.scrollTo(0, 0);
   }
 
@@ -788,6 +790,7 @@
       state.lang = e.target.value;
       store.set("lang", state.lang);
       applyLang();
+      document.dispatchEvent(new CustomEvent("langchange", { detail: state.lang }));
       if ($("#countrySheet").hidden === false) renderCountryList($("#countryFilter").value);
     });
 
@@ -871,10 +874,21 @@
   }
 
   // ---------- init ----------
-  function init() {
+  // UI is prepared immediately; data (location, places) only loads after the
+  // access gate (auth.js) calls window.startApp() for an approved user.
+  function prepare() {
     applyBrand();
     bind();
     applyLang();
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+  }
+
+  let started = false;
+  function start() {
+    if (started) return;
+    started = true;
     const last = store.get("lastCenter", null);
     if (last) {
       setCenter(last);
@@ -884,10 +898,20 @@
       locateMe();
     }
     openFromHash();
-    if ("serviceWorker" in navigator && location.protocol !== "file:") {
-      navigator.serviceWorker.register("sw.js").catch(() => {});
-    }
   }
 
-  init();
+  window.App = {
+    start,
+    showView,
+    getLang: () => state.lang,
+    setLang(lang) {
+      if (!I18N[lang] || lang === state.lang) return;
+      state.lang = lang;
+      store.set("lang", lang);
+      applyLang();
+    },
+    esc,
+  };
+
+  prepare();
 })();

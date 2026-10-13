@@ -1,0 +1,42 @@
+rules_version = '2';
+
+// Access rules for ASHRF Remas Tours.
+// - A user can only create their own record, and only as "pending" + unpaid.
+// - A user can record their own PayPal payment details, but can NEVER change `status`.
+// - Only the admin e-mail(s) can read all users and approve / block them.
+// Keep the admin list in sync with `adminEmails` in config.js.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['ante.wbs@gmail.com'];
+    }
+
+    function isSelf(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin() || isSelf(uid);
+
+      allow create: if isAdmin() || (isSelf(uid)
+        && request.resource.data.keys().hasOnly(['email', 'name', 'phone', 'lang', 'status', 'paid', 'createdAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.paid == false
+        && request.resource.data.email == request.auth.token.email);
+
+      allow update: if isAdmin() || (isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['paid', 'paypalOrderId', 'paypalCaptureId', 'payerEmail', 'payerName', 'amount', 'currency', 'paidAt', 'name', 'phone']));
+
+      allow delete: if isAdmin();
+    }
+
+    // everything else is closed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -27,6 +27,27 @@ window.APP_CONFIG = {
     website: "",
   },
 
+  // ---------- גישה בתשלום ובאישור ----------
+  // מנהלים: רק המיילים האלה רואים את מסך הניהול ומאשרים משתמשים.
+  // אם משנים כאן, צריך לשנות גם בקובץ firestore.rules.
+  adminEmails: ["ante.wbs@gmail.com"],
+
+  // דמי גישה חד-פעמיים
+  price: { amount: "10.00", currency: "USD" },
+
+  // PayPal: Client ID מ-developer.paypal.com → Apps & Credentials (מצב Live)
+  paypal: {
+    clientId: "",
+  },
+
+  // Firebase: console.firebase.google.com → Project settings → Your apps → Web app → Config
+  firebase: {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    appId: "",
+  },
+
   // מיקום ברירת מחדל כשאין הרשאת מיקום
   defaultCenter: { lat: 33.0907, lon: 35.1975 },
   defaultLanguage: "he", // he | ar | en

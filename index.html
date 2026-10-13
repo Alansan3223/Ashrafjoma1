@@ -16,7 +16,12 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="locked">
+  <!-- Access gate: sign-in → payment → owner approval (auth.js) -->
+  <div id="gate" class="gate">
+    <div id="gateBody" class="gate-body"><div class="spinner"></div></div>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <img id="brandLogo" class="brand-logo" alt="logo">
@@ -67,6 +72,11 @@
       <div id="favorites" class="results"></div>
     </section>
 
+    <!-- Admin (owner only) -->
+    <section id="view-admin" class="view">
+      <div id="adminPanel" class="admin-panel"></div>
+    </section>
+
     <!-- About -->
     <section id="view-about" class="view">
       <div class="about-card">
@@ -81,6 +91,10 @@
         <h3 data-t="install"></h3>
         <p class="muted" data-t="installHint"></p>
         <button id="installBtn" class="pill primary" hidden>⬇️ <span data-t="install"></span></button>
+        <div id="logoutBox" class="logout-box" hidden>
+          <span class="muted" id="logoutUser" dir="ltr"></span>
+          <button id="logoutBtn" class="pill">🚪 <span data-t="logout"></span></button>
+        </div>
         <p class="credit" data-t="dataCredit"></p>
       </div>
     </section>
@@ -91,6 +105,7 @@
     <button data-view="map"><span>🗺️</span><small data-t="tabMap"></small></button>
     <button data-view="favorites"><span>♡</span><small data-t="tabFavorites"></small></button>
     <button data-view="about"><span>✈️</span><small data-t="tabAbout"></small></button>
+    <button data-view="admin" id="adminTabBtn" hidden><span>🛡️<b id="adminBadge" class="badge"></b></span><small data-t="tabAdmin"></small></button>
   </nav>
 
   <!-- Place details sheet -->
@@ -118,5 +133,6 @@
   <script src="config.js"></script>
   <script src="i18n.js"></script>
   <script src="app.js"></script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>
