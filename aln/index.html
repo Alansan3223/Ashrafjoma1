@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ע.ל.נ — קטלוג דנטלי</title>
+  <meta name="description" content="ע.ל.נ — קטלוג שתלים וציוד דנטלי למרפאות, עם הזמנה מהירה בוואטסאפ.">
+  <meta name="theme-color" content="#0E7C86">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ע.ל.נ">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img id="logo" class="logo" alt="ע.ל.נ">
+      <div><div id="brandName" class="brand-name"></div><div id="tagline" class="tagline"></div></div>
+    </div>
+    <button id="langBtn" class="lang-btn"></button>
+  </header>
+
+  <main>
+    <section id="view-catalog" class="view active">
+      <div class="search"><span>🔍</span><input id="search" type="search" enterkeyhint="search"></div>
+      <nav id="cats" class="cats"></nav>
+      <div id="list" class="grid"></div>
+    </section>
+
+    <section id="view-cart" class="view">
+      <h2 data-t="cart"></h2>
+      <div id="cartList"></div>
+      <form id="orderForm" class="panel" hidden>
+        <h3 data-t="clinicDetails"></h3>
+        <label><span data-t="clinic"></span><input name="clinic" required autocomplete="organization"></label>
+        <label><span data-t="doctor"></span><input name="doctor" required autocomplete="name"></label>
+        <label><span data-t="phone"></span><input name="phone" type="tel" dir="ltr" required autocomplete="tel"></label>
+        <label><span data-t="city"></span><input name="city" required autocomplete="address-level2"></label>
+        <label><span data-t="notes"></span><textarea name="notes" rows="2"></textarea></label>
+        <button class="btn wa" type="submit">💬 <span data-t="sendOrder"></span></button>
+        <p class="muted small" data-t="orderNote"></p>
+      </form>
+    </section>
+
+    <section id="view-about" class="view">
+      <div class="panel center">
+        <img id="aboutLogo" class="about-logo" alt="ע.ל.נ">
+        <h2 id="aboutName"></h2>
+        <p data-t="aboutText"></p>
+        <div class="contact">
+          <a id="callBtn" class="btn">📞 <span data-t="call"></span></a>
+          <a id="waBtn" class="btn wa" target="_blank" rel="noopener">💬 <span data-t="whatsapp"></span></a>
+          <a id="mailBtn" class="btn">✉️ <span data-t="email"></span></a>
+          <button id="shareBtn" class="btn">🔗 <span data-t="shareCatalog"></span></button>
+        </div>
+        <h3 data-t="install"></h3>
+        <p class="muted" data-t="installHint"></p>
+        <p class="muted small" data-t="disclaimer"></p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-view="catalog" class="active"><span>🦷</span><small data-t="tabCatalog"></small></button>
+    <button data-view="cart"><span>🛒<b id="cartBadge" class="badge"></b></span><small data-t="tabCart"></small></button>
+    <button data-view="about"><span>ℹ️</span><small data-t="tabAbout"></small></button>
+  </nav>
+
+  <div id="sheet" class="sheet" hidden>
+    <div class="backdrop" data-close></div>
+    <article class="sheet-body"><div class="handle" data-close></div><div id="sheetContent"></div></article>
+  </div>
+
+  <div id="pro" class="pro" hidden>
+    <div class="pro-card">
+      <img id="proLogo" class="about-logo" alt="">
+      <h2 id="proName"></h2>
+      <p data-t="proText"></p>
+      <button id="proOk" class="btn primary" data-t="proOk"></button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="config.js"></script>
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
