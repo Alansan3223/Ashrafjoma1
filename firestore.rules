@@ -34,6 +34,26 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Quote requests: created only by the server (requestQuote function).
+    // The customer can read their own; only the admin can update status.
+    match /quotes/{id} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'adminNote', 'updatedAt']);
+      allow create, delete: if false;
+    }
+
+    // Supplier cost and profit — admin only.
+    match /quotes_private/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Raw searches (with costs) are server-only.
+    match /searches/{id} {
+      allow read, write: if false;
+    }
+
     // everything else is closed
     match /{document=**} {
       allow read, write: if false;

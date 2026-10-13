@@ -13,6 +13,11 @@ import {
 
 const C = window.APP_CONFIG;
 const App = window.App;
+
+// Shared Firebase handles for other modules (quotes.js). `ready` resolves once the user is approved.
+export const fb = { app: null, auth: null, db: null, user: null, isAdmin: false };
+let resolveReady;
+export const ready = new Promise((r) => (resolveReady = r));
 const esc = App.esc;
 
 const T = {
@@ -321,6 +326,9 @@ function errMsg(e) {
 }
 
 function unlock() {
+  fb.user = currentUser;
+  fb.isAdmin = isAdminEmail(currentUser.email) && currentUser.emailVerified;
+  resolveReady(fb);
   gate.hidden = true;
   document.body.classList.remove("locked");
   document.getElementById("logoutBox").hidden = false;
@@ -586,12 +594,13 @@ async function doLogout() {
 
 // ---------- boot ----------
 function boot() {
-  const fb = C.firebase || {};
-  if (!fb.apiKey || !fb.projectId) { show("config"); return; }
+  const fbConf = C.firebase || {};
+  if (!fbConf.apiKey || !fbConf.projectId) { show("config"); return; }
   show("loading");
-  const app = initializeApp(fb);
+  const app = initializeApp(fbConf);
   auth = getAuth(app);
   db = getFirestore(app);
+  Object.assign(fb, { app, auth, db });
   getRedirectResult(auth).catch((e) => show("login", { error: errMsg(e) }));
   onAuthStateChanged(auth, (user) => {
     currentUser = user;

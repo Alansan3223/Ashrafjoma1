@@ -904,6 +904,7 @@
     start,
     showView,
     getLang: () => state.lang,
+    getCenter: () => state.center,
     setLang(lang) {
       if (!I18N[lang] || lang === state.lang) return;
       state.lang = lang;

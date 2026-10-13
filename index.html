@@ -74,7 +74,17 @@
 
     <!-- Admin (owner only) -->
     <section id="view-admin" class="view">
+      <div id="adminSections" class="seg admin-sections">
+        <button data-admin-section="users" class="active">👥 <span data-t="adminUsers"></span></button>
+        <button data-admin-section="quotes">🎫 <span data-t="adminQuotes"></span> <b id="quotesBadge" class="badge-inline"></b></button>
+      </div>
       <div id="adminPanel" class="admin-panel"></div>
+      <div id="adminQuotes" class="admin-panel" hidden></div>
+    </section>
+
+    <!-- Flight & hotel quotes -->
+    <section id="view-quote" class="view">
+      <div id="quoteApp"></div>
     </section>
 
     <!-- About -->
@@ -103,6 +113,7 @@
   <nav class="tabbar">
     <button data-view="explore" class="active"><span>🧭</span><small data-t="tabExplore"></small></button>
     <button data-view="map"><span>🗺️</span><small data-t="tabMap"></small></button>
+    <button data-view="quote"><span>🎫</span><small data-t="tabQuote"></small></button>
     <button data-view="favorites"><span>♡</span><small data-t="tabFavorites"></small></button>
     <button data-view="about"><span>✈️</span><small data-t="tabAbout"></small></button>
     <button data-view="admin" id="adminTabBtn" hidden><span>🛡️<b id="adminBadge" class="badge"></b></span><small data-t="tabAdmin"></small></button>
@@ -134,5 +145,6 @@
   <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script type="module" src="auth.js"></script>
+  <script type="module" src="quotes.js"></script>
 </body>
 </html>
