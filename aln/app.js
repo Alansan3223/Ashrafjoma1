@@ -23,6 +23,8 @@
       proOk: "אני איש/אשת מקצוע — כניסה",
       copied: "הקישור הועתק",
       orderTitle: "הזמנה חדשה — ע.ל.נ",
+      orderReady: "ההזמנה מוכנה", orderReadyHint: "לחצו על הכפתור כדי לשלוח אותה בוואטסאפ.",
+      openWhatsapp: "שליחה בוואטסאפ", copyOrder: "העתקת ההזמנה", sendTo: "או שלחו את הטקסט למספר",
     },
     ar: {
       dir: "rtl", other: "עברית",
@@ -41,6 +43,8 @@
       proOk: "أنا مهني/ة — دخول",
       copied: "تم نسخ الرابط",
       orderTitle: "طلب جديد — ع.ل.ن",
+      orderReady: "الطلب جاهز", orderReadyHint: "اضغط الزر لإرساله عبر واتساب.",
+      openWhatsapp: "إرسال عبر واتساب", copyOrder: "نسخ الطلب", sendTo: "أو أرسل النص إلى الرقم",
     },
   };
 
@@ -211,7 +215,25 @@
       f.get("notes") ? `${t("notes")}: ${f.get("notes")}` : "",
     ].filter((x, i, a) => x !== "" || a[i - 1] !== "").join("\n");
     store.set("aln-clinic", { clinic: f.get("clinic"), doctor: f.get("doctor"), phone: f.get("phone"), city: f.get("city") });
-    window.open(`https://wa.me/${encodeURIComponent(C.whatsapp)}?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
+    // A real link (not window.open) works everywhere, including iPhone and embedded viewers.
+    const url = `https://wa.me/${encodeURIComponent(C.whatsapp)}?text=${encodeURIComponent(msg)}`;
+    $("#sheetContent").innerHTML = `
+      <h2>✅ ${esc(t("orderReady"))}</h2>
+      <p class="muted">${esc(t("orderReadyHint"))}</p>
+      <a class="btn wa" href="${esc(url)}" target="_blank" rel="noopener">💬 ${esc(t("openWhatsapp"))}</a>
+      <pre class="order-text" id="orderText">${esc(msg)}</pre>
+      <button class="btn" id="copyOrder">📋 ${esc(t("copyOrder"))}</button>
+      <p class="muted small">${esc(t("sendTo"))} <span dir="ltr">${esc(C.phone)}</span></p>`;
+    $("#sheet").hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  async function copyText(text, el) {
+    try { await navigator.clipboard.writeText(text); toast(t("copied")); }
+    catch {
+      const r = document.createRange(); r.selectNodeContents(el);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
   }
 
   // ---------- views & events ----------
@@ -242,6 +264,7 @@
         if (l) { l.qty += +q.dataset.d; if (l.qty < 1) state.cart = state.cart.filter((x) => x !== l); }
         store.set("aln-cart", state.cart); renderCart(); return;
       }
+      if (e.target.closest("#copyOrder")) { copyText($("#orderText").textContent, $("#orderText")); return; }
       if (e.target.closest("[data-close]")) closeSheet();
     });
 
@@ -254,7 +277,7 @@
       try {
         if (navigator.share) await navigator.share({ title: C.name, text: L(C.tagline), url });
         else { await navigator.clipboard.writeText(url); toast(t("copied")); }
-      } catch { /* cancelled */ }
+      } catch { toast(url); }
     };
     $("#proOk").onclick = () => { store.set("aln-pro", true); $("#pro").hidden = true; };
   }
