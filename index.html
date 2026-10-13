@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ASHRF Remas Tours</title>
+  <meta name="description" content="ASHRF Remas Tours — אטרקציות, מסעדות ומלונות בכל מדינה, עם כתובת, מפה ודרכי הגעה בתחבורה ציבורית.">
+  <meta name="theme-color" content="#1A5DB8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ASHRF Tours">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img id="brandLogo" class="brand-logo" alt="logo">
+      <div class="brand-text">
+        <div id="brandName" class="brand-name"></div>
+        <div id="brandTagline" class="brand-tagline"></div>
+      </div>
+    </div>
+    <select id="langSelect" class="lang-select" aria-label="language"></select>
+  </header>
+
+  <main>
+    <!-- Explore -->
+    <section id="view-explore" class="view active">
+      <form id="searchForm" class="search" autocomplete="off">
+        <input id="searchInput" type="search" enterkeyhint="search">
+        <button type="submit" class="icon-btn" aria-label="search">🔍</button>
+      </form>
+      <ul id="searchSuggestions" class="suggestions" hidden></ul>
+
+      <div class="quick-row">
+        <button id="nearMeBtn" class="pill primary">📍 <span data-t="nearMe"></span></button>
+        <button id="countryBtn" class="pill">🌍 <span data-t="chooseCountry"></span></button>
+      </div>
+
+      <div id="cityChips" class="chips" hidden></div>
+
+      <div id="currentPlace" class="current-place" hidden></div>
+
+      <nav id="categories" class="categories"></nav>
+
+      <div class="radius-row">
+        <span data-t="radius"></span>
+        <div id="radiusBtns" class="seg"></div>
+        <span id="resultsCount" class="muted"></span>
+      </div>
+
+      <div id="results" class="results"></div>
+    </section>
+
+    <!-- Map -->
+    <section id="view-map" class="view">
+      <div id="map"></div>
+    </section>
+
+    <!-- Favorites -->
+    <section id="view-favorites" class="view">
+      <div id="favorites" class="results"></div>
+    </section>
+
+    <!-- About -->
+    <section id="view-about" class="view">
+      <div class="about-card">
+        <img id="aboutLogo" class="about-logo" alt="logo">
+        <h2 id="aboutName"></h2>
+        <p class="muted" id="aboutTagline"></p>
+        <h3 data-t="aboutTitle"></h3>
+        <p data-t="aboutText"></p>
+        <h3 data-t="contactUs"></h3>
+        <div id="contactBtns" class="contact-btns"></div>
+        <div id="contactInfo" class="contact-info"></div>
+        <h3 data-t="install"></h3>
+        <p class="muted" data-t="installHint"></p>
+        <button id="installBtn" class="pill primary" hidden>⬇️ <span data-t="install"></span></button>
+        <p class="credit" data-t="dataCredit"></p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-view="explore" class="active"><span>🧭</span><small data-t="tabExplore"></small></button>
+    <button data-view="map"><span>🗺️</span><small data-t="tabMap"></small></button>
+    <button data-view="favorites"><span>♡</span><small data-t="tabFavorites"></small></button>
+    <button data-view="about"><span>✈️</span><small data-t="tabAbout"></small></button>
+  </nav>
+
+  <!-- Place details sheet -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <article class="sheet-body" role="dialog" aria-modal="true">
+      <div class="sheet-handle" data-close></div>
+      <div id="sheetContent"></div>
+    </article>
+  </div>
+
+  <!-- Country picker -->
+  <div id="countrySheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <article class="sheet-body tall" role="dialog" aria-modal="true">
+      <div class="sheet-handle" data-close></div>
+      <input id="countryFilter" type="search" class="country-filter">
+      <ul id="countryList" class="country-list"></ul>
+    </article>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="config.js"></script>
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
