@@ -503,8 +503,11 @@
   }
 
   // ---------- views ----------
+  // The place guide is for members; trips, quotes and about are open to everyone.
+  const MEMBER_VIEWS = ["explore", "map", "favorites"];
   function showView(v) {
     if (!$(`#view-${v}`)) return;
+    if (MEMBER_VIEWS.includes(v) && window.Access && !window.Access.ok()) { window.Access.prompt(v); return; }
     state.view = v;
     $$(".view").forEach((el) => el.classList.toggle("active", el.id === `view-${v}`));
     $$(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.view === v));
@@ -570,7 +573,7 @@
   function closeSheet(sel) {
     $(sel).hidden = true;
     if ($$(".sheet").every((s) => s.hidden)) document.body.style.overflow = "";
-    if (sel === "#sheet" && location.hash.startsWith("#p=")) history.replaceState(null, "", location.pathname + location.search);
+    if (sel === "#sheet" && /^#(p=|trip-)/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
   }
 
   function navLinks(p) {
@@ -805,6 +808,7 @@
     });
 
     $("#nearMeBtn").addEventListener("click", () => locateMe());
+    $("#favBtn").addEventListener("click", () => showView("favorites"));
     $("#countryBtn").addEventListener("click", () => {
       renderCountryList();
       $("#countryFilter").value = "";
@@ -890,7 +894,11 @@
     if (started) return;
     started = true;
     const last = store.get("lastCenter", null);
-    if (last) {
+    if (state.pendingCenter) {
+      setCenter(state.pendingCenter);
+      state.pendingCenter = null;
+      locateMe({ setAsCenter: false });
+    } else if (last) {
       setCenter(last);
       if (last.country) loadCities(last.country);
       locateMe({ setAsCenter: false });
@@ -905,6 +913,12 @@
     showView,
     getLang: () => state.lang,
     getCenter: () => state.center,
+    toast,
+    exploreAt(c) {
+      state.pendingCenter = c;
+      showView("explore");
+      if (started) { setCenter(c); state.pendingCenter = null; }
+    },
     setLang(lang) {
       if (!I18N[lang] || lang === state.lang) return;
       state.lang = lang;

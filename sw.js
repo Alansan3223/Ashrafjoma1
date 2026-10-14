@@ -1,8 +1,8 @@
 // Service worker: caches the app shell so the app opens offline; live data always comes from the network.
-const CACHE = "ashrf-tours-v7";
+const CACHE = "ashrf-tours-v8";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "config.js", "i18n.js", "manifest.webmanifest",
-  "auth.js", "quotes.js", "codes-gate.js", "access-codes.js", "assets/logo.svg", "assets/icon-192.png", "assets/icon-512.png",
+  "auth.js", "quotes.js", "codes-gate.js", "access-codes.js", "trips.js", "trips-data.js", "assets/logo.svg", "assets/icon-192.png", "assets/icon-512.png",
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
   "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
 ];

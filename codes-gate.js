@@ -16,7 +16,8 @@
   const T = {
     he: {
       welcome: "ברוכים הבאים",
-      intro: "האפליקציה מיועדת למנויים. הכניסה היא עם קוד אישי שמקבלים אחרי התשלום.",
+      intro: "המדריך החכם (מקומות, מפה ותחבורה ציבורית בכל מדינה) מיועד למנויים. הכניסה היא עם קוד אישי שמקבלים אחרי התשלום.",
+      back: "חזרה לטיולים",
       payOnce: "חד-פעמי",
       howTitle: "איך מקבלים קוד?",
       how1: "שולחים לנו הודעה בוואטסאפ",
@@ -46,7 +47,8 @@
     },
     ar: {
       welcome: "أهلًا وسهلًا",
-      intro: "التطبيق للمشتركين. الدخول برمز شخصي تحصل عليه بعد الدفع.",
+      intro: "الدليل الذكي (أماكن وخريطة ومواصلات عامة في كل دولة) للمشتركين. الدخول برمز شخصي تحصل عليه بعد الدفع.",
+      back: "العودة إلى الرحلات",
       payOnce: "لمرة واحدة",
       howTitle: "كيف أحصل على رمز؟",
       how1: "أرسل لنا رسالة عبر واتساب",
@@ -75,7 +77,8 @@
     },
     en: {
       welcome: "Welcome",
-      intro: "This app is for members. You sign in with a personal code you receive after paying.",
+      intro: "The smart guide (places, maps and public transport in every country) is for members. Sign in with the personal code you receive after paying.",
+      back: "Back to trips",
       payOnce: "one-time",
       howTitle: "How do I get a code?",
       how1: "Send us a WhatsApp message",
@@ -124,6 +127,13 @@
 
   let error = "";
   let busy = false;
+  let role = null;        // "customer" | "admin" once a valid code (or a Play purchase) is present
+  let pendingView = null; // member view the visitor tried to open
+
+  window.Access = {
+    ok: () => !!role,
+    prompt(view) { pendingView = view; lock(); },
+  };
 
   function render() {
     document.documentElement.dir = window.I18N[App.getLang()].dir;
@@ -141,6 +151,7 @@
           <button class="gate-btn primary" type="submit" ${busy ? "disabled" : ""}>${esc(busy ? t("checking") : t("enter"))}</button>
         </form>
         <p class="gate-error" ${error ? "" : "hidden"}>${esc(error)}</p>
+        <button type="button" class="link-btn gate-back" data-gate-back>← ${esc(t("back"))}</button>
         <div class="gate-how">
           <div class="price"><span dir="ltr">$${esc(amount)}</span><small>${esc(t("payOnce"))}</small></div>
           <b>${esc(t("howTitle"))}</b>
@@ -164,14 +175,20 @@
     render();
   }
 
-  function unlock(role) {
+  function openApp() {
     gate.hidden = true;
     document.body.classList.remove("locked");
+  }
+
+  function unlock(r) {
+    role = r;
+    openApp();
     const box = document.getElementById("logoutBox");
     box.hidden = false;
-    document.getElementById("logoutUser").textContent = role === "admin" ? "👑 Admin" : "✅";
-    if (role === "admin") setupAdmin();
+    document.getElementById("logoutUser").textContent = r === "admin" ? "👑 Admin" : "✅";
+    if (r === "admin") setupAdmin();
     App.start();
+    if (pendingView) { const v = pendingView; pendingView = null; App.showView(v); }
   }
 
   // ---------- admin: profit calculator ----------
@@ -229,11 +246,11 @@
     busy = true; error = ""; render();
     try {
       const h = await hashCode(code);
-      const role = roleOf(h);
-      if (!role) throw new Error("bad code");
+      const r = roleOf(h);
+      if (!r) throw new Error("bad code");
       store.set(h);
       busy = false;
-      unlock(role);
+      unlock(r);
     } catch {
       busy = false; error = t("bad"); render();
       const input = document.getElementById("codeInput");
@@ -243,7 +260,8 @@
 
   gate.addEventListener("click", (e) => {
     const b = e.target.closest("[data-gate-lang]");
-    if (b) { App.setLang(b.dataset.gateLang); render(); }
+    if (b) { App.setLang(b.dataset.gateLang); render(); return; }
+    if (e.target.closest("[data-gate-back]")) { pendingView = null; error = ""; openApp(); App.showView("trips"); }
   });
 
   document.addEventListener("input", (e) => { if (e.target.closest("#adminPanel input")) calc(); });
@@ -265,7 +283,7 @@
   }
 
   const saved = store.get();
-  const role = saved && roleOf(saved);
-  if (role) unlock(role);
-  else { store.set(null); lock(); }
+  const savedRole = saved && roleOf(saved);
+  if (savedRole) unlock(savedRole);
+  else { store.set(null); openApp(); } // trips store is open to everyone; the guide asks for a code
 })();

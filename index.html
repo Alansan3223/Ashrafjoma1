@@ -37,7 +37,11 @@
 
   <main>
     <!-- Explore -->
-    <section id="view-explore" class="view active">
+    <section id="view-trips" class="view active">
+      <div id="tripsApp"></div>
+    </section>
+
+    <section id="view-explore" class="view">
       <form id="searchForm" class="search" autocomplete="off">
         <input id="searchInput" type="search" enterkeyhint="search">
         <button type="submit" class="icon-btn" aria-label="search">🔍</button>
@@ -47,6 +51,7 @@
       <div class="quick-row">
         <button id="nearMeBtn" class="pill primary">📍 <span data-t="nearMe"></span></button>
         <button id="countryBtn" class="pill">🌍 <span data-t="chooseCountry"></span></button>
+        <button id="favBtn" class="pill">♡ <span data-t="tabFavorites"></span></button>
       </div>
 
       <div id="cityChips" class="chips" hidden></div>
@@ -113,10 +118,10 @@
   </main>
 
   <nav class="tabbar">
-    <button data-view="explore" class="active"><span>🧭</span><small data-t="tabExplore"></small></button>
+    <button data-view="trips" class="active"><span>🧳</span><small data-t="tabTrips"></small></button>
+    <button data-view="explore"><span>🧭</span><small data-t="tabExplore"></small></button>
     <button data-view="map"><span>🗺️</span><small data-t="tabMap"></small></button>
     <button data-view="quote"><span>🎫</span><small data-t="tabQuote"></small></button>
-    <button data-view="favorites"><span>♡</span><small data-t="tabFavorites"></small></button>
     <button data-view="about"><span>✈️</span><small data-t="tabAbout"></small></button>
     <button data-view="admin" id="adminTabBtn" hidden><span>🛡️<b id="adminBadge" class="badge"></b></span><small data-t="tabAdmin"></small></button>
   </nav>
@@ -146,6 +151,8 @@
   <script src="config.js"></script>
   <script src="i18n.js"></script>
   <script src="app.js"></script>
+  <script src="trips-data.js"></script>
+  <script src="trips.js"></script>
   <script src="access-codes.js"></script>
   <script src="codes-gate.js"></script>
   <script type="module" src="quotes.js"></script>

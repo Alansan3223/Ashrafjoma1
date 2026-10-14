@@ -13,7 +13,7 @@
 | מייל ליצירת קשר | ante.wbs@gmail.com |
 | אייקון 512×512 | `store/icon-512.png` |
 | תמונת נושא 1024×500 | `store/feature-graphic.png` |
-| צילומי מסך | `store/screenshot-1.png` עד `store/screenshot-4.png` |
+| צילומי מסך | `store/screenshot-1.png` עד `store/screenshot-5.png` |
 
 ## שלבים
 1. **חשבון מפתח:** נכנסים ל-https://play.google.com/console ולוחצים "Create account", בתשלום חד-פעמי של 25$, עם אימות זהות.
@@ -47,6 +47,7 @@
 **תיאור מלא:**
 ASHRF Remas Tours – המדריך שלכם לטיול בכל מדינה בעולם.
 
+🧳 חנות טיולים: טיולים מאורגנים וחבילות טיסה ומלון, עם תאריכים, מחירים, מסלול מלא והרשמה בוואטסאפ.
 🧭 גלו מקומות: אטרקציות, מוזיאונים, תצפיות, מסעדות, בתי קפה, מלונות, חופים, שמורות טבע, שווקים ומקומות קדושים, סביבכם או בכל עיר שתבחרו.
 📍 כתובת, מפה, שעות פתיחה, טלפון ואתר לכל מקום.
 🚌 איך מגיעים: תחנות האוטובוס, הרכבת, המטרו והחשמלית הקרובות, עם מספרי הקווים ודקות ההליכה.
@@ -64,6 +65,7 @@ ASHRF Remas Tours · Travel & Be Happy
 **الوصف الكامل:**
 ASHRF Remas Tours – دليلك للسفر إلى أي دولة في العالم.
 
+🧳 متجر رحلات: رحلات منظّمة وباقات طيران وفندق، مع التواريخ والأسعار والبرنامج الكامل والتسجيل عبر واتساب.
 🧭 اكتشف الأماكن: معالم سياحية، متاحف، مطاعم، مقاهٍ، فنادق، شواطئ، محميات طبيعية، أسواق وأماكن مقدسة، بالقرب منك أو في أي مدينة تختارها.
 📍 العنوان والخريطة وساعات العمل والهاتف لكل مكان.
 🚌 كيف تصل: أقرب محطات الحافلات والقطارات والمترو والترام، مع أرقام الخطوط ودقائق المشي.
@@ -79,6 +81,7 @@ Attractions, restaurants & hotels worldwide – with maps and public transport
 **Full description:**
 ASHRF Remas Tours – your travel guide for any country in the world.
 
+🧳 Trips store: group tours and flight + hotel packages with dates, prices, full itinerary and WhatsApp booking.
 🧭 Discover places: attractions, museums, viewpoints, restaurants, cafés, hotels, beaches, nature reserves, markets and holy sites, near you or in any city you choose.
 📍 Address, map, opening hours, phone and website for every place.
 🚌 Getting there: the nearest bus, train, metro and tram stops with line numbers and walking minutes.
