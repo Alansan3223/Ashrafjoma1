@@ -1,5 +1,5 @@
 // Service worker: caches the app shell so the app opens offline; live data always comes from the network.
-const CACHE = "ashrf-tours-v5";
+const CACHE = "ashrf-tours-v6";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "config.js", "i18n.js", "manifest.webmanifest",
   "auth.js", "quotes.js", "codes-gate.js", "access-codes.js", "assets/logo.svg", "assets/icon-192.png", "assets/icon-512.png",

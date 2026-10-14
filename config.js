@@ -32,6 +32,10 @@ window.APP_CONFIG = {
   // "firebase" = הרשמה, תשלום PayPal ואישור במסך ניהול (דורש הגדרת Firebase ו-PayPal, ראו README).
   accessMode: "codes",
 
+  // Google Play: מזהה החבילה של האפליקציה בחנות. מי שקנה דרך החנות נכנס בלי קוד.
+  // חייב להיות זהה ל-Package ID שמזינים ב-PWABuilder.
+  playPackageId: "io.github.alansan3223.ashrftours",
+
   // מנהלים: רק המיילים האלה רואים את מסך הניהול ומאשרים משתמשים.
   // אם משנים כאן, צריך לשנות גם בקובץ firestore.rules.
   adminEmails: ["ante.wbs@gmail.com"],

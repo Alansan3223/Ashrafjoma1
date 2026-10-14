@@ -248,6 +248,16 @@
   });
 
   // ---------- boot ----------
+  // Bought on Google Play: the store app (Trusted Web Activity) opens the site with an
+  // android-app:// referrer for our package, so it skips the code screen.
+  const PLAY = "play:" + (C.playPackageId || "");
+  if (C.playPackageId && document.referrer.startsWith("android-app://" + C.playPackageId)) store.set(PLAY);
+  if (C.playPackageId && store.get() === PLAY) {
+    unlock("customer");
+    document.getElementById("logoutBox").hidden = true; // nothing to sign out of for store buyers
+    return;
+  }
+
   const saved = store.get();
   const role = saved && roleOf(saved);
   if (role) unlock(role);
