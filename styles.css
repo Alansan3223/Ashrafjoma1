@@ -400,3 +400,12 @@ code { background: var(--chip); padding: 2px 6px; border-radius: 6px; font-size:
 .badge-inline:empty { display: none; }
 .badge-inline { background: #E0475B; color: #fff; border-radius: 999px; padding: 0 6px; font-size: .7rem; }
 textarea { font: inherit; resize: vertical; }
+
+/* ---------- Entry-code gate ---------- */
+#codeInput { text-align: center; font-size: 1.15rem; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; }
+.gate-how { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); text-align: start; }
+.gate-how .price { justify-content: center; margin: 0 0 6px; }
+.gate-how ol { margin: 8px 0 4px; padding-inline-start: 22px; line-height: 1.8; }
+.calc-out { grid-template-columns: 1fr 1fr; }
+.calc-out b { font-size: 1.3rem; }
+.order-text { white-space: pre-wrap; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font: inherit; font-size: .9rem; user-select: text; }

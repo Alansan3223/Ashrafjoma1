@@ -2,16 +2,22 @@
  * the business margin, and the customer sends a quote request that the owner handles
  * from the admin screen.
  */
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-import {
-  collection, query, where, orderBy, onSnapshot, doc, updateDoc, serverTimestamp,
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { fb, ready } from "./auth.js";
-
 const C = window.APP_CONFIG;
+// Firebase (and auth.js, which boots the sign-in gate) is loaded only in "firebase" access mode.
+const LIVE = (C.accessMode || "firebase") === "firebase";
+const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+let fb = {}, ready = new Promise(() => {});
+let getFunctions, httpsCallable, collection, query, where, orderBy, onSnapshot, doc, updateDoc, serverTimestamp;
+if (LIVE) {
+  ({ fb, ready } = await import("./auth.js"));
+  ({ getFunctions, httpsCallable } = await import(FB + "firebase-functions.js"));
+  ({ collection, query, where, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } = await import(FB + "firebase-firestore.js"));
+}
+
 const App = window.App;
 const esc = App.esc;
 const FUNCTIONS_REGION = "europe-west1";
+// Live prices need the Firebase + Duffel server. In "codes" mode the forms send a request on WhatsApp instead.
 
 const T = {
   he: {
@@ -39,6 +45,9 @@ const T = {
     openQuotes: "בקשות פתוחות", noAdminQuotes: "אין בקשות",
     waMsgToCustomer: "שלום {name}, כאן {biz}. לגבי בקשתך: {summary}. המחיר: {price}. לאישור ההזמנה השב/י להודעה זו.",
     waMsgToOwner: "שלום, שלחתי בקשה להצעת מחיר: {summary} — {price}",
+    waIntro: "מלאו את הפרטים ונשלח לכם הצעת מחיר משתלמת בוואטסאפ.",
+    sendWa: "בקשת הצעת מחיר בוואטסאפ", reqReady: "הבקשה מוכנה", reqReadyHint: "לחצו כדי לשלוח אותה אלינו בוואטסאפ.",
+    reqFlight: "בקשת הצעת מחיר לטיסה", reqHotel: "בקשת הצעת מחיר למלון", oneWayShort: "כיוון אחד",
   },
   ar: {
     flights: "رحلات طيران", hotels: "فنادق", myQuotes: "عروضي",
@@ -64,6 +73,9 @@ const T = {
     openQuotes: "طلبات مفتوحة", noAdminQuotes: "لا توجد طلبات",
     waMsgToCustomer: "مرحبًا {name}، معك {biz}. بخصوص طلبك: {summary}. السعر: {price}. لتأكيد الحجز يرجى الرد على هذه الرسالة.",
     waMsgToOwner: "مرحبًا، أرسلت طلب عرض سعر: {summary} — {price}",
+    waIntro: "املأ التفاصيل وسنرسل لك عرض سعر مميزًا عبر واتساب.",
+    sendWa: "طلب عرض سعر عبر واتساب", reqReady: "الطلب جاهز", reqReadyHint: "اضغط لإرساله إلينا عبر واتساب.",
+    reqFlight: "طلب عرض سعر لرحلة طيران", reqHotel: "طلب عرض سعر لفندق", oneWayShort: "اتجاه واحد",
   },
   en: {
     flights: "Flights", hotels: "Hotels", myQuotes: "My quotes",
@@ -89,6 +101,9 @@ const T = {
     openQuotes: "Open requests", noAdminQuotes: "No requests",
     waMsgToCustomer: "Hi {name}, this is {biz}. About your request: {summary}. Price: {price}. Reply to this message to confirm the booking.",
     waMsgToOwner: "Hi, I sent a quote request: {summary} — {price}",
+    waIntro: "Fill in the details and we'll send you a great price on WhatsApp.",
+    sendWa: "Request a quote on WhatsApp", reqReady: "Your request is ready", reqReadyHint: "Tap to send it to us on WhatsApp.",
+    reqFlight: "Flight quote request", reqHotel: "Hotel quote request", oneWayShort: "One way",
   },
 };
 
@@ -139,13 +154,14 @@ function errText(e) {
 
 // ---------- render ----------
 function render() {
-  const tabs = ["flights", "hotels", "myQuotes"].map((k) =>
+  const tabs = (LIVE ? ["flights", "hotels", "myQuotes"] : ["flights", "hotels"]).map((k) =>
     `<button data-q-tab="${k}" class="${ui.tab === k ? "active" : ""}">${k === "flights" ? "✈️" : k === "hotels" ? "🏨" : "📋"} ${esc(t(k))}</button>`).join("");
   let body = "";
   if (ui.tab === "flights") body = flightForm() + resultsHtml("flights");
   if (ui.tab === "hotels") body = hotelForm() + resultsHtml("hotels");
   if (ui.tab === "myQuotes") body = myQuotesHtml();
-  root.innerHTML = `<div class="seg q-tabs">${tabs}</div>${body}`;
+  const intro = LIVE ? "" : `<p class="muted q-note">💬 ${esc(t("waIntro"))}</p>`;
+  root.innerHTML = `<div class="seg q-tabs">${tabs}</div>${intro}${body}`;
 }
 
 function opt(n, from, to, sel) {
@@ -182,8 +198,14 @@ function flightForm() {
       <div class="q-field"><label>${esc(t("infants"))}</label><select name="infants">${opt(0, 0, 4, f.infants)}</select></div>
       <div class="q-field"><label>${esc(t("cabin"))}</label><select name="cabin">${["economy", "premium_economy", "business", "first"].map((c) => `<option value="${c}" ${c === f.cabin ? "selected" : ""}>${esc(t("cab_" + c))}</option>`).join("")}</select></div>
     </div>
-    <button class="gate-btn primary" type="submit" ${ui.loading ? "disabled" : ""}>🔍 ${esc(t("search"))}</button>
+    ${submitBtn()}
   </form>`;
+}
+
+function submitBtn() {
+  return LIVE
+    ? `<button class="gate-btn primary" type="submit" ${ui.loading ? "disabled" : ""}>🔍 ${esc(t("search"))}</button>`
+    : `<button class="gate-btn wa" type="submit">💬 ${esc(t("sendWa"))}</button>`;
 }
 
 function hotelForm() {
@@ -205,7 +227,7 @@ function hotelForm() {
       <div class="q-field"><label>${esc(t("children"))}</label><select name="children">${opt(0, 0, 6, h.children)}</select></div>
       <div class="q-field"><label>${esc(t("rooms"))}</label><select name="rooms">${opt(0, 1, 5, h.rooms)}</select></div>
     </div>
-    <button class="gate-btn primary" type="submit" ${ui.loading ? "disabled" : ""}>🔍 ${esc(t("search"))}</button>
+    ${submitBtn()}
   </form>`;
 }
 
@@ -287,6 +309,7 @@ function fmtTs(ts) {
 // ---------- airport autocomplete ----------
 let suggTimer;
 function onAcInput(input) {
+  if (!LIVE) return;
   const field = input.name;
   ui.flight[field] = null;
   clearTimeout(suggTimer);
@@ -312,8 +335,18 @@ async function searchFlights(form) {
     depart: fd.get("depart"), ret: fd.get("ret") || "", oneWay: !!fd.get("oneWay"),
     adults: +fd.get("adults"), children: +fd.get("children"), infants: +fd.get("infants"), cabin: fd.get("cabin"),
   });
-  if (!f.from || !f.to) { ui.error = t("badPlace"); render(); return; }
   if (!f.oneWay && f.ret && f.ret < f.depart) { ui.error = t("badDates"); render(); return; }
+  if (!LIVE) {
+    const from = String(fd.get("from") || "").trim(), to = String(fd.get("to") || "").trim();
+    return waRequest([
+      `*${t("reqFlight")}*`,
+      `✈️ ${from} → ${to}`,
+      `${t("depart")}: ${f.depart}` + (f.oneWay || !f.ret ? ` (${t("oneWayShort")})` : ` · ${t("ret")}: ${f.ret}`),
+      `${t("adults")}: ${f.adults} · ${t("children")}: ${f.children} · ${t("infants")}: ${f.infants}`,
+      `${t("cabin")}: ${t("cab_" + f.cabin)}`,
+    ]);
+  }
+  if (!f.from || !f.to) { ui.error = t("badPlace"); render(); return; }
   await runSearch("flights", "searchFlights", {
     origin: f.from.code, destination: f.to.code, departDate: f.depart, returnDate: f.oneWay ? null : (f.ret || null),
     adults: f.adults, children: f.children, infants: f.infants, cabin: f.cabin,
@@ -326,6 +359,16 @@ async function searchHotels(form) {
   const place = String(fd.get("place") || "").trim();
   Object.assign(h, { checkIn: fd.get("checkIn"), checkOut: fd.get("checkOut"), adults: +fd.get("adults"), children: +fd.get("children"), rooms: +fd.get("rooms") });
   if (!(h.checkOut > h.checkIn)) { ui.error = t("badDates"); render(); return; }
+  if (!LIVE) {
+    h.place = place;
+    const nights = Math.round((Date.parse(h.checkOut) - Date.parse(h.checkIn)) / 86400000);
+    return waRequest([
+      `*${t("reqHotel")}*`,
+      `🏨 ${place}`,
+      `${t("checkIn")}: ${h.checkIn} · ${t("checkOut")}: ${h.checkOut} (${nights} ${t("nights")})`,
+      `${t("adults")}: ${h.adults} · ${t("children")}: ${h.children} · ${t("rooms")}: ${h.rooms}`,
+    ]);
+  }
   if (place !== h.place || h.lat == null) {
     try {
       const qs = new URLSearchParams({ q: place, format: "jsonv2", limit: "1", "accept-language": lang() });
@@ -337,6 +380,19 @@ async function searchHotels(form) {
   await runSearch("hotels", "searchHotels", {
     place: h.place, lat: h.lat, lon: h.lon, checkIn: h.checkIn, checkOut: h.checkOut, adults: h.adults, children: h.children, rooms: h.rooms,
   });
+}
+
+function waRequest(lines) {
+  ui.error = "";
+  const msg = lines.join("\n");
+  const url = `https://wa.me/${encodeURIComponent(C.contact.whatsapp)}?text=${encodeURIComponent(msg)}`;
+  document.getElementById("sheetContent").innerHTML = `
+    <h2>✅ ${esc(t("reqReady"))}</h2>
+    <p class="muted">${esc(t("reqReadyHint"))}</p>
+    <pre class="order-text">${esc(msg)}</pre>
+    <a class="gate-btn wa" href="${esc(url)}" target="_blank" rel="noopener">💬 ${esc(t("sendWa"))}</a>`;
+  document.getElementById("sheet").hidden = false;
+  document.body.style.overflow = "hidden";
 }
 
 async function runSearch(kind, fn, data) {

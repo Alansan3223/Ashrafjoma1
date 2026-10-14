@@ -13,6 +13,8 @@ import {
 
 const C = window.APP_CONFIG;
 const App = window.App;
+// This module runs only in "firebase" access mode; "codes" mode is handled by codes-gate.js.
+const ACTIVE = (C.accessMode || "firebase") === "firebase";
 
 // Shared Firebase handles for other modules (quotes.js). `ready` resolves once the user is approved.
 export const fb = { app: null, auth: null, db: null, user: null, isAdmin: false };
@@ -522,6 +524,7 @@ async function setStatus(uid, status) {
 
 // ---------- events ----------
 gate.addEventListener("click", async (e) => {
+  if (!ACTIVE) return;
   const langBtn = e.target.closest("[data-gate-lang]");
   if (langBtn) {
     App.setLang(langBtn.dataset.gateLang);
@@ -555,6 +558,7 @@ gate.addEventListener("click", async (e) => {
 });
 
 gate.addEventListener("submit", async (e) => {
+  if (!ACTIVE) return;
   if (e.target.id !== "emailForm") return;
   e.preventDefault();
   const f = new FormData(e.target);
@@ -577,6 +581,7 @@ gate.addEventListener("submit", async (e) => {
 });
 
 document.addEventListener("click", (e) => {
+  if (!ACTIVE) return;
   if (e.target.closest("#logoutBtn")) { doLogout(); return; }
   const f = e.target.closest("[data-admin-filter]");
   if (f) { adminFilter = f.dataset.adminFilter; renderAdmin(); return; }
@@ -584,7 +589,7 @@ document.addEventListener("click", (e) => {
   if (s) setStatus(s.dataset.uid, s.dataset.adminSet);
 });
 
-document.addEventListener("langchange", () => { renderAdmin(); if (!gate.hidden) render(); });
+document.addEventListener("langchange", () => { if (!ACTIVE) return; renderAdmin(); if (!gate.hidden) render(); });
 
 async function doLogout() {
   await signOut(auth);
@@ -594,6 +599,7 @@ async function doLogout() {
 
 // ---------- boot ----------
 function boot() {
+  if (!ACTIVE) return;
   const fbConf = C.firebase || {};
   if (!fbConf.apiKey || !fbConf.projectId) { show("config"); return; }
   show("loading");
