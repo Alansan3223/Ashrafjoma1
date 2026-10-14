@@ -130,7 +130,7 @@
     const wa = C.contact.whatsapp ? `https://wa.me/${encodeURIComponent(C.contact.whatsapp)}?text=${encodeURIComponent(t("waBuy"))}` : null;
     const amount = Number((C.price && C.price.amount) || 10).toFixed(0);
     gateBody.innerHTML = `
-      <img class="gate-logo" src="${esc(C.logo)}" onerror="this.onerror=null;this.src='${esc(C.logoFallback)}'" alt="logo">
+      <img class="gate-logo" src="${esc(C.logo)}" data-fallback="${esc(C.logoFallback)}" alt="logo">
       <h1 class="gate-name">${esc(C.businessName)}</h1>
       <p class="gate-tagline">${esc(C.tagline)}</p>
       <div class="gate-card">
@@ -150,6 +150,12 @@
       </div>
       <div class="gate-langs">${Object.keys(window.I18N).map((k) =>
         `<button data-gate-lang="${k}" class="${k === App.getLang() ? "active" : ""}">${esc(window.I18N[k].langName)}</button>`).join("")}</div>`;
+    fixLogo();
+  }
+
+  function fixLogo() {
+    const img = gateBody.querySelector("img[data-fallback]");
+    if (img) img.addEventListener("error", () => { img.src = img.dataset.fallback; }, { once: true });
   }
 
   function lock() {

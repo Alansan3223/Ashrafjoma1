@@ -80,9 +80,9 @@
   };
 
   function pickLang() {
-    // Hebrew by default; Arabic phones get Arabic. English is available from the switcher.
-    const nav = (navigator.language || "").slice(0, 2);
-    return nav === "ar" || nav === "he" ? nav : (C.defaultLanguage || "he");
+    // Phones set to Hebrew or Arabic get that language; everyone else in the world gets English.
+    const nav = (navigator.language || "").slice(0, 2).toLowerCase();
+    return nav === "iw" ? "he" : I18N[nav] ? nav : "en";
   }
 
   const $ = (s, el = document) => el.querySelector(s);

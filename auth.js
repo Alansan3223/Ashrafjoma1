@@ -219,7 +219,7 @@ const isAdminEmail = (email) =>
 
 // ---------- screens ----------
 function logoHtml() {
-  return `<img class="gate-logo" src="${esc(C.logo)}" onerror="this.onerror=null;this.src='${esc(C.logoFallback)}'" alt="logo">
+  return `<img class="gate-logo" src="${esc(C.logo)}" data-fallback="${esc(C.logoFallback)}" alt="logo">
     <h1 class="gate-name">${esc(C.businessName)}</h1>
     <p class="gate-tagline">${esc(C.tagline)}</p>`;
 }
@@ -306,6 +306,8 @@ function render() {
     }
   }
   gateBody.innerHTML = logoHtml() + `<div class="gate-card">${html}</div>` + langSwitchHtml();
+  const logo = gateBody.querySelector("img[data-fallback]");
+  if (logo) logo.addEventListener("error", () => { logo.src = logo.dataset.fallback; }, { once: true });
   if (screen === "pay") mountPayPal();
 }
 
