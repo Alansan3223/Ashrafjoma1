@@ -1,5 +1,5 @@
 // Service worker: caches the app shell so the app opens offline; live data always comes from the network.
-const CACHE = "ashrf-tours-v4";
+const CACHE = "ashrf-tours-v5";
 const SHELL = [
   "./", "index.html", "styles.css", "app.js", "config.js", "i18n.js", "manifest.webmanifest",
   "auth.js", "quotes.js", "codes-gate.js", "access-codes.js", "assets/logo.svg", "assets/icon-192.png", "assets/icon-512.png",
@@ -23,7 +23,7 @@ self.addEventListener("fetch", (e) => {
   if (!isShell) return; // APIs and map tiles: straight to network
   // network-first so updates to config/logo show up, cache as offline fallback
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: "no-cache" })
       .then((res) => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
         return res;
