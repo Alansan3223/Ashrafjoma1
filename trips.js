@@ -87,14 +87,16 @@
   }
   const upcoming = (trip) => trip.dates.filter((d) => d.end >= new Date().toISOString().slice(0, 10));
 
+  // Real photo when the trip has one, otherwise the destination illustration (scenes.js).
   function cover(trip, big) {
-    const bg = trip.image
-      ? `background-image:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.55)),url('${esc(trip.image)}')`
-      : `background:linear-gradient(135deg,${esc(trip.colors[0])},${esc(trip.colors[1])})`;
-    return `<div class="trip-cover ${big ? "big" : ""}" style="${bg}">
-      ${trip.image ? "" : `<span class="trip-flag">${trip.flag}</span>`}
+    const art = trip.image
+      ? `<div class="trip-photo" style="background-image:url('${esc(trip.image)}')"></div>`
+      : (window.Scenes ? window.Scenes.render(trip.scene) : "");
+    return `<div class="trip-cover ${big ? "big" : ""}">
+      ${art}
       <span class="trip-type">${esc(t(trip.type))}</span>
       ${SHOW_SAMPLE_BADGE ? `<span class="trip-sample">${esc(t("sample"))}</span>` : ""}
+      <span class="trip-dest">${trip.flag} ${esc(trip.days)} ${esc(t("days"))}</span>
     </div>`;
   }
 
@@ -112,8 +114,11 @@
     const tab = (k) => `<button data-trip-filter="${k}" class="${filter === k ? "active" : ""}">${esc(t(k))}</button>`;
     root.innerHTML = `
       <div class="trips-hero">
-        <h2>${esc(t("heroTitle"))}</h2>
-        <p>${esc(t("heroText"))}</p>
+        ${window.Scenes ? window.Scenes.hero() : ""}
+        <div class="trips-hero-text">
+          <h2>${esc(t("heroTitle"))}</h2>
+          <p>${esc(t("heroText"))}</p>
+        </div>
       </div>
       <div class="seg trips-seg">${tab("all")}${tab("group")}${tab("package")}</div>
       <div class="trip-list">

@@ -457,3 +457,25 @@ textarea { font: inherit; resize: vertical; }
 #favBtn { min-height: 44px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* ---------- Trips store: illustrated design ---------- */
+.trips-hero { position: relative; overflow: hidden; padding: 0; min-height: 170px; display: flex; align-items: flex-end; background: #0B2A57; }
+.trips-hero > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.trips-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,42,87,0) 25%, rgba(11,42,87,.88) 100%); }
+.trips-hero-text { position: relative; z-index: 1; padding: 18px 18px 16px; }
+.trips-hero-text h2 { margin: 0 0 4px; font-size: 1.45rem; font-weight: 900; letter-spacing: -.01em; text-wrap: balance; }
+.trips-hero-text p { margin: 0; opacity: .92; font-size: .95rem; }
+.trip-cover { height: 172px; overflow: hidden; background: #0B2A57; display: block; }
+.trip-cover.big { height: 210px; }
+.trip-cover > svg, .trip-photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.trip-photo { background-size: cover; background-position: center; }
+.trip-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,42,87,0) 55%, rgba(11,42,87,.55) 100%); pointer-events: none; }
+.trip-type, .trip-sample, .trip-dest { z-index: 1; }
+.trip-type { backdrop-filter: blur(6px); }
+.trip-dest { position: absolute; bottom: 10px; inset-inline-start: 12px; color: #fff; font-weight: 800; font-size: .85rem; text-shadow: 0 1px 6px rgba(0,0,0,.35); }
+.trip-card { transition: transform .15s ease, box-shadow .15s ease; }
+.trip-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(16,42,84,.16); }
+@media (prefers-reduced-motion: reduce) { .trip-card { transition: none; } .trip-card:hover { transform: none; } }
+.trip-body h3 { font-size: 1.15rem; font-weight: 800; }
+.trip-price b { font-weight: 900; letter-spacing: -.01em; }
+.trip-foot .pill.primary { padding: 9px 16px; min-height: 40px; }

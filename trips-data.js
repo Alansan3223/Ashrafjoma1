@@ -6,7 +6,8 @@
 //   priceFrom: מחיר לאדם בדולרים, החל מ-
 //   dates: [{ start, end, seats }]  — seats = כמה מקומות נשארו (למשל 6 → "נשארו 6 מקומות")
 //   includes: flight, hotel, breakfast, halfboard, guide, transfers, tours, insurance
-//   image: קישור לתמונה (לא חובה). בלי תמונה מוצג רקע צבעוני עם דגל.
+//   image: קישור לתמונה אמיתית (לא חובה). בלי תמונה מוצג איור של היעד.
+//   scene: איזה איור להציג: istanbul, georgia, petra, dubai, thailand (אחר = מטוס מעל הים)
 //   center: מרכז היעד, לכפתור "גלו את היעד" במדריך
 
 const TL = (he, ar, en) => ({ he, ar, en });
@@ -14,6 +15,7 @@ const TL = (he, ar, en) => ({ he, ar, en });
 window.TRIPS = [
   {
     id: "istanbul",
+    scene: "istanbul",
     type: "group",
     flag: "🇹🇷",
     colors: ["#C8102E", "#F28C28"],
@@ -34,6 +36,7 @@ window.TRIPS = [
   },
   {
     id: "georgia",
+    scene: "georgia",
     type: "group",
     flag: "🇬🇪",
     colors: ["#1B6B4A", "#7CB342"],
@@ -54,6 +57,7 @@ window.TRIPS = [
   },
   {
     id: "petra",
+    scene: "petra",
     type: "group",
     flag: "🇯🇴",
     colors: ["#B5651D", "#E0A458"],
@@ -74,6 +78,7 @@ window.TRIPS = [
   },
   {
     id: "dubai",
+    scene: "dubai",
     type: "package",
     flag: "🇦🇪",
     colors: ["#0B4F8A", "#3AA0D8"],
@@ -94,6 +99,7 @@ window.TRIPS = [
   },
   {
     id: "thailand",
+    scene: "thailand",
     type: "package",
     flag: "🇹🇭",
     colors: ["#2E7D32", "#26A69A"],
